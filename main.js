@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function userInteracted() {
     interacted = true;
-    claimBtn.innerText = "Sedang memproses...";
+    claimBtn.innerText = "Processing...";
     window.location.href = CONFIG.smartlink;
   }
 
@@ -25,14 +25,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const timer = setInterval(() => {
     if (countdown > 0) {
       countdown--;
-      countdownEl.innerText = interacted ? "Mengalihkan..." : `Menunggu interaksi... ${countdown}`;
+      countdownEl.innerText = interacted ? "Switching..." : `Waiting for interaction... ${countdown}`;
     } else {
       clearInterval(timer);
       if (!interacted) {
         window.scrollBy({ top: 150, behavior: 'smooth' });
         setTimeout(() => {
           window.location.href = CONFIG.smartlink;
-        }, 1000);
+        }, 5000);
       }
     }
   }, 1000);
