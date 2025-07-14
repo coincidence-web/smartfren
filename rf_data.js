@@ -10,7 +10,10 @@ const SPOOF_REFERER = {
   "https://www.okx.com/jumpstart",
   "https://community.trustwallet.com/c/announcements",
   "https://www.reddit.com/r/cryptocurrencydeals/",
-  "https://www.coingecko.com/account/candy"
+  "https://www.coingecko.com/account/candy",
+  "https://taskon.xyz/discover",
+  "https://bountyhunters.io/",
+  "https://airdropalert.com/"
   ]
 };
 
