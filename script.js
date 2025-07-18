@@ -54,5 +54,5 @@ if (!hasVisitedRecently()) {
     startCountdown(); // Redirect tetap berjalan
   });
 } else {
-  document.querySelector(".info").textContent = "Anda sudah mengunjungi halaman ini dalam 8 jam terakhir.";
+  document.querySelector(".info").textContent = "Back again after 8 hours";
 }
