@@ -1,58 +1,73 @@
-const redirectURL = "https://clickadu.com/your-smartlink-dummy";
-let countdownStart = 10;
-let countdownEl = document.getElementById("countdown");
 
-// IP Limiter
-function hasVisitedRecently() {
-  return document.cookie.includes("visited=true");
-}
+document.addEventListener("DOMContentLoaded", function () {
+  function redirectToSmartlink() {
+    saveVisitTime();
+    setTimeout(() => {
+      const a = document.createElement('a');
+      a.href = getRandomSmartlink() + "?src=landing";
+      a.rel = "noreferrer";
+      a.target = "_self";
+      a.click();
+    }, 500);
+  }
 
-function setVisitCookie() {
-  const d = new Date();
-  d.setTime(d.getTime() + (8 * 60 * 60 * 1000)); // 8 jam
-  document.cookie = "visited=true; expires=" + d.toUTCString() + "; path=/";
-}
+  function redirectToPage2() {
+    window.location.href = "page2.html";
+  }
 
-// Auto scroll ringan
-function autoScroll() {
-  let pos = 0;
-  setInterval(() => {
-    window.scrollTo(0, pos++);
-  }, 1000);
-}
+  function startCountdown() {
+    let count = 5;
+    const countdownEl = document.getElementById("countdown");
+    if (!countdownEl) return;
+    const timer = setInterval(() => {
+      count--;
+      countdownEl.textContent = count;
+      if (count <= 0) clearInterval(timer);
+    }, 1000);
+  }
 
-// Countdown + redirect
-function startCountdown() {
-  const timer = setInterval(() => {
-    countdownEl.textContent = countdownStart;
-    countdownStart--;
-    if (countdownStart < 0) {
-      clearInterval(timer);
-      window.location.href = redirectURL;
+  function checkAccess() {
+    if (hasVisitedRecently()) {
+      document.body.innerHTML = "<h1 class='warning'>Akses Dibatasi</h1><p>Silakan coba kembali setelah 8 jam.</p>";
+      return;
     }
-  }, 1000);
-}
 
-// Adblock fallback (sederhana)
-function detectAdblock(callback) {
-  const bait = document.querySelector(".bait-class");
-  setTimeout(() => {
-    const blocked = (bait && getComputedStyle(bait).display === "none") || bait.offsetHeight === 0;
-    callback(blocked);
-  }, 1000);
-}
+    const bait = document.createElement('div');
+    bait.className = 'adsbox';
+    bait.style = 'height:1px; width:1px; position:absolute; left:-9999px;';
+    document.body.appendChild(bait);
 
-// Main logic
-if (!hasVisitedRecently()) {
-  setVisitCookie();
-  autoScroll();
+    setTimeout(() => {
+      if (bait.offsetHeight === 0) {
+        redirectToPage2();
+      } else {
+        document.referrer = getRandomReferer();
+        redirectToSmartlink();
+      }
+      bait.remove();
+    }, 100);
+  }
 
-  detectAdblock(function (adblocked) {
-    if (adblocked) {
-      console.warn("Adblock terdeteksi. Tetap redirect.");
-    }
-    startCountdown(); // Redirect tetap berjalan
-  });
-} else {
-  document.querySelector(".info").textContent = "Back again after 8 hours";
-}
+  function page2Logic() {
+    let scrollY = 0;
+    const scrollInterval = setInterval(() => {
+      scrollY += 2;
+      window.scrollTo({ top: scrollY, behavior: "smooth" });
+      if (scrollY > 100) clearInterval(scrollInterval);
+    }, 300);
+
+    setTimeout(() => {
+      window.location.href = getRandomSmartlink() + "?fallback=" + new Date().getTime();
+    }, 7000);
+  }
+
+  // Routing logic based on page
+  if (document.body.classList.contains("index-page")) {
+    startCountdown();
+    checkAccess();
+  }
+
+  if (document.body.classList.contains("page2")) {
+    page2Logic();
+  }
+});
